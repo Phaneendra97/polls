@@ -104,7 +104,7 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ navigation }) => {
 
   return (
     <View style={[styles.container, windowWidth > 600 && styles.containerWide]}>
-      <Title style={styles.title}>Poll Dance</Title>
+      <Text style={styles.title}>Poll Dance</Text>
       <View style={styles.formContainer}>
         <View style={styles.inputRow}>
           <TextInput
