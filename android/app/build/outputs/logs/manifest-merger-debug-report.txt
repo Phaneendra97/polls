@@ -7,11 +7,11 @@ INJECTED from /home/phani/repos/polls/android/app/src/debug/AndroidManifest.xml:
 INJECTED from /home/phani/repos/polls/android/app/src/debug/AndroidManifest.xml:2:1-9:12
 MERGED from [:react-native-firebase_auth] /home/phani/repos/polls/node_modules/@react-native-firebase/auth/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:2:1-11:12
 MERGED from [:react-native-firebase_app] /home/phani/repos/polls/node_modules/@react-native-firebase/app/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:2:1-30:12
+MERGED from [:react-native-google-signin_google-signin] /home/phani/repos/polls/node_modules/@react-native-google-signin/google-signin/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:2:1-7:12
 MERGED from [:react-native-gesture-handler] /home/phani/repos/polls/node_modules/react-native-gesture-handler/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:2:1-7:12
 MERGED from [:react-native-reanimated] /home/phani/repos/polls/node_modules/react-native-reanimated/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:2:1-7:12
 MERGED from [:react-native-safe-area-context] /home/phani/repos/polls/node_modules/react-native-safe-area-context/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:2:1-7:12
 MERGED from [:react-native-screens] /home/phani/repos/polls/node_modules/react-native-screens/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:2:1-7:12
-MERGED from [:react-native-vector-icons] /home/phani/repos/polls/node_modules/react-native-vector-icons/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:2:1-7:12
 MERGED from [com.facebook.react:react-android:0.74.2] /home/phani/.gradle/caches/transforms-4/716f968cc1e5225035406d1e56ec874f/transformed/jetified-react-android-0.74.2-debug/AndroidManifest.xml:2:1-24:12
 MERGED from [androidx.appcompat:appcompat-resources:1.6.1] /home/phani/.gradle/caches/transforms-4/bcd1aaab3390fd5a0905d07d3a934f98/transformed/jetified-appcompat-resources-1.6.1/AndroidManifest.xml:17:1-22:12
 MERGED from [com.google.android.material:material:1.6.1] /home/phani/.gradle/caches/transforms-4/452ffdcf9637ac22e3426671d55dd6fb/transformed/material-1.6.1/AndroidManifest.xml:17:1-26:12
@@ -220,6 +220,8 @@ MERGED from [:react-native-firebase_auth] /home/phani/repos/polls/node_modules/@
 MERGED from [:react-native-firebase_auth] /home/phani/repos/polls/node_modules/@react-native-firebase/auth/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:5:5-44
 MERGED from [:react-native-firebase_app] /home/phani/repos/polls/node_modules/@react-native-firebase/app/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:6:5-44
 MERGED from [:react-native-firebase_app] /home/phani/repos/polls/node_modules/@react-native-firebase/app/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:6:5-44
+MERGED from [:react-native-google-signin_google-signin] /home/phani/repos/polls/node_modules/@react-native-google-signin/google-signin/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:5:5-44
+MERGED from [:react-native-google-signin_google-signin] /home/phani/repos/polls/node_modules/@react-native-google-signin/google-signin/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:5:5-44
 MERGED from [:react-native-gesture-handler] /home/phani/repos/polls/node_modules/react-native-gesture-handler/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:5:5-44
 MERGED from [:react-native-gesture-handler] /home/phani/repos/polls/node_modules/react-native-gesture-handler/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:5:5-44
 MERGED from [:react-native-reanimated] /home/phani/repos/polls/node_modules/react-native-reanimated/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:5:5-44
@@ -228,8 +230,6 @@ MERGED from [:react-native-safe-area-context] /home/phani/repos/polls/node_modul
 MERGED from [:react-native-safe-area-context] /home/phani/repos/polls/node_modules/react-native-safe-area-context/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:5:5-44
 MERGED from [:react-native-screens] /home/phani/repos/polls/node_modules/react-native-screens/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:5:5-44
 MERGED from [:react-native-screens] /home/phani/repos/polls/node_modules/react-native-screens/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:5:5-44
-MERGED from [:react-native-vector-icons] /home/phani/repos/polls/node_modules/react-native-vector-icons/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:5:5-44
-MERGED from [:react-native-vector-icons] /home/phani/repos/polls/node_modules/react-native-vector-icons/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:5:5-44
 MERGED from [com.facebook.react:react-android:0.74.2] /home/phani/.gradle/caches/transforms-4/716f968cc1e5225035406d1e56ec874f/transformed/jetified-react-android-0.74.2-debug/AndroidManifest.xml:10:5-44
 MERGED from [com.facebook.react:react-android:0.74.2] /home/phani/.gradle/caches/transforms-4/716f968cc1e5225035406d1e56ec874f/transformed/jetified-react-android-0.74.2-debug/AndroidManifest.xml:10:5-44
 MERGED from [androidx.appcompat:appcompat-resources:1.6.1] /home/phani/.gradle/caches/transforms-4/bcd1aaab3390fd5a0905d07d3a934f98/transformed/jetified-appcompat-resources-1.6.1/AndroidManifest.xml:20:5-44

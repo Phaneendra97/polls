@@ -1,22 +1,28 @@
 import React, { useState, useEffect } from "react";
 import { View, StyleSheet, Dimensions, Modal, Text } from "react-native";
-import { TextInput, Button, Title } from "react-native-paper";
+import { TextInput, Button } from "react-native-paper";
 import { LoginScreenProps } from "../types/navigation";
-import { authentication } from "../utils/firebase";
+import { authentication, firestore } from "../utils/firebase";
 import {
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
   sendEmailVerification,
-  reload,
+  GoogleAuthProvider,
+  signInWithCredential,
 } from "firebase/auth";
 import { useAuth } from "../contexts/AuthContext";
+import { GoogleSignin, statusCodes } from "@react-native-google-signin/google-signin";
+import { doc, getDoc } from 'firebase/firestore';
+
+GoogleSignin.configure({
+  webClientId: "YOUR_WEB_CLIENT_ID", // From Firebase console
+});
 
 const LoginScreen: React.FC<LoginScreenProps> = ({ navigation }) => {
-  const { loggedInUser, setLoggedInUser } = useAuth(); // Access loggedInUser state and setLoggedInUser function from AuthContext
+  const { loggedInUser, setLoggedInUser } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [verificationModalVisible, setVerificationModalVisible] =
-    useState(false);
+  const [verificationModalVisible, setVerificationModalVisible] = useState(false);
   const [resendDisabled, setResendDisabled] = useState(false);
   const [resendCountdown, setResendCountdown] = useState(30);
 
@@ -32,40 +38,39 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ navigation }) => {
 
   const handleLogin = async () => {
     try {
-      // Check if user is logged in with correct credentials
-      const userCredential = await signInWithEmailAndPassword(
-        authentication,
-        email,
-        password
-      );
+      const userCredential = await signInWithEmailAndPassword(authentication, email, password);
       const user = userCredential.user;
-
+  
       if (user.emailVerified) {
-        setLoggedInUser(user); // Update loggedInUser state in AuthContext
-        navigation.navigate("Home");
+        // Check if user profile exists in Firestore
+        const userProfileDocRef = doc(firestore, 'users_profile', user.uid);
+        const userProfileDoc = await getDoc(userProfileDocRef);
+  
+        if (userProfileDoc.exists()) {
+          setLoggedInUser(user);
+          navigation.navigate('Home');
+        } else {
+          setLoggedInUser(user);
+          navigation.navigate('GettingStarted');
+        }
       } else {
-        console.log("Email not verified yet.");
+        console.log('Email not verified yet.');
         setVerificationModalVisible(true);
       }
-    } catch (error) {
-      console.error("Login Error:", error);
+    } catch (error: any) {
+      console.error('Login Error:', error);
     }
   };
 
   const handleSignup = async () => {
     try {
-      const userCredential = await createUserWithEmailAndPassword(
-        authentication,
-        email,
-        password
-      );
+      const userCredential = await createUserWithEmailAndPassword(authentication, email, password);
       if (userCredential.user !== null && authentication.currentUser) {
-        setLoggedInUser(userCredential.user); // Update loggedInUser state in AuthContext
         await sendEmailVerification(authentication.currentUser);
         setVerificationModalVisible(true);
-        setResendDisabled(true); // Disable resend initially when modal opens
-        setResendCountdown(30); // Reset countdown
-        startResendCountdown(); // Start countdown timer
+        setResendDisabled(true);
+        setResendCountdown(30);
+        startResendCountdown();
       }
     } catch (error) {
       console.error("Signup Error:", error);
@@ -73,14 +78,14 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ navigation }) => {
   };
 
   const startResendCountdown = () => {
-    setResendDisabled(true); // Disable resend button initially
+    setResendDisabled(true);
     let countdown = 30;
     const interval = setInterval(() => {
       countdown--;
       setResendCountdown(countdown);
       if (countdown === 0) {
         clearInterval(interval);
-        setResendDisabled(false); // Enable resend button after countdown ends
+        setResendDisabled(false);
       }
     }, 1000);
   };
@@ -89,7 +94,7 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ navigation }) => {
     try {
       if (!resendDisabled && authentication.currentUser) {
         await sendEmailVerification(authentication.currentUser);
-        startResendCountdown(); // Restart countdown
+        startResendCountdown();
       }
     } catch (error) {
       console.error("Resend Verification Error:", error);
@@ -99,6 +104,32 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ navigation }) => {
   const handleCloseVerificationModal = () => {
     setVerificationModalVisible(false);
   };
+
+  const signInWithGoogle = async () => {
+    try {
+      await GoogleSignin.hasPlayServices();
+      const userInfo = await GoogleSignin.signIn();
+      const { idToken } = userInfo;
+      const googleCredential = GoogleAuthProvider.credential(idToken);
+      const userCredential = await signInWithCredential(authentication, googleCredential);
+      setLoggedInUser(userCredential.user);
+      navigation.navigate("Home");
+    } catch (error) {
+      // Use type assertion to specify the type of error
+      const typedError = error as { code?: string };
+  
+      if (typedError.code === statusCodes.SIGN_IN_CANCELLED) {
+        console.log("User cancelled the login flow");
+      } else if (typedError.code === statusCodes.IN_PROGRESS) {
+        console.log("Sign in is in progress already");
+      } else if (typedError.code === statusCodes.PLAY_SERVICES_NOT_AVAILABLE) {
+        console.log("Play services not available or outdated");
+      } else {
+        console.error("Google Sign-In Error:", error);
+      }
+    }
+  };
+  
 
   const windowWidth = Dimensions.get("window").width;
 
@@ -128,7 +159,7 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ navigation }) => {
             compact
             mode="text"
             style={{ alignSelf: "center" }}
-            onPress={() => navigation.navigate("ForgotPassword")}
+            // onPress={() => navigation.navigate("ForgotPassword")}
           >
             Forgot Password?
           </Button>
@@ -149,14 +180,23 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ navigation }) => {
             Sign Up
           </Button>
         </View>
+        <View style={styles.googleSignInContainer}>
+          <Button
+            mode="contained"
+            onPress={signInWithGoogle}
+            style={[styles.button, styles.googleSignInButton]}
+            // icon={() => <Icon name="google" size={20} color="#4285F4" />}
+          >
+            Continue with Google
+          </Button>
+        </View>
       </View>
 
-      {/* Verification Modal */}
       <Modal
         animationType="slide"
         visible={verificationModalVisible}
         onRequestClose={handleCloseVerificationModal}
-        transparent={false} // Ensure modal is not transparent
+        transparent={false}
       >
         <View style={styles.modalContainer}>
           <Text style={styles.modalText}>
@@ -196,7 +236,7 @@ const styles = StyleSheet.create({
     padding: 16,
   },
   containerWide: {
-    paddingHorizontal: "20%", // Adjust padding for wide screens
+    paddingHorizontal: "20%",
   },
   title: {
     marginBottom: 72,
@@ -206,7 +246,7 @@ const styles = StyleSheet.create({
   },
   formContainer: {
     width: "100%",
-    maxWidth: 400, // Limit width for better readability on wide screens
+    maxWidth: 400,
   },
   inputRow: {
     marginBottom: 16,
@@ -226,18 +266,26 @@ const styles = StyleSheet.create({
     width: "48%",
   },
   signInButton: {
-    backgroundColor: "#007AFF", // Adjust colors as needed
+    backgroundColor: "#007AFF",
     borderWidth: 2,
   },
   signUpButton: {
     borderColor: "#007AFF",
     borderWidth: 2,
   },
+  googleSignInContainer: {
+    marginTop: 16,
+    width: "100%", // Make the button container full width
+  },
+  googleSignInButton: {
+    width: "100%", // Make the button full width
+    borderWidth: 2,
+  },
   modalContainer: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "#fff", // Change to the desired background color
+    backgroundColor: "#fff",
     paddingHorizontal: 16,
     borderRadius: 10,
     margin: 20,
@@ -246,7 +294,7 @@ const styles = StyleSheet.create({
     marginBottom: 16,
     fontSize: 18,
     textAlign: "center",
-    color: "#000", // Change to the desired text color
+    color: "#000",
   },
   resendButton: {
     marginBottom: 16,

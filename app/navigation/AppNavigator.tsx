@@ -2,20 +2,28 @@
 import React from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
 import LoginScreen from '../screens/LoginScreen';
-// import SignupScreen from '../screens/SignupScreen';
-// import ForgotPasswordScreen from '../screens/ForgotPasswordScreen';
-// import HomeScreen from '../screens/HomeScreen';
+import HomeScreen from '../screens/HomeScreen';
+import GettingStartedScreen from '../screens/GettingStartedScreen';
+import { useAuth } from '../contexts/AuthContext';
 import { RootStackParamList } from '../types/navigation';
 
 const Stack = createStackNavigator<RootStackParamList>();
 
-const AppNavigator = () => (
-  <Stack.Navigator>
-    <Stack.Screen name="Login" options={{ headerShown: false }} component={LoginScreen} />
-    {/* <Stack.Screen name="Signup" component={SignupScreen} />
-    <Stack.Screen name="ForgotPassword" component={ForgotPasswordScreen} />
-    <Stack.Screen name="Home" component={HomeScreen} /> */}
-  </Stack.Navigator>
-);
+const AppNavigator: React.FC = () => {
+  const { loggedInUser } = useAuth();
+
+  return (
+    <Stack.Navigator>
+      {loggedInUser ? (
+        <>
+          <Stack.Screen name="Home" options={{ headerShown: false }} component={HomeScreen} />
+          <Stack.Screen name="GettingStarted" options={{ headerShown: false }} component={GettingStartedScreen} />
+        </>
+      ) : (
+        <Stack.Screen name="Login" options={{ headerShown: false }} component={LoginScreen} />
+      )}
+    </Stack.Navigator>
+  );
+};
 
 export default AppNavigator;
