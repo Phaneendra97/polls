@@ -1,35 +1,57 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
-import { Appbar, Button } from 'react-native-paper';
+import { Appbar, BottomNavigation, useTheme } from 'react-native-paper';
 import { useAuth } from '../contexts/AuthContext';
-import { HomeScreenProps } from "../types/navigation";
+import { HomeScreenProps, PollsScreenNavigationProp, PollsScreenRouteProp, VotesScreenNavigationProp, VotesScreenRouteProp } from '../types/navigation';
 import Icon from 'react-native-vector-icons/MaterialIcons';
+import PollsScreen from './PollsScreen';
+import VotesScreen from './VotesScreen';
 
 const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
   const { setLoggedInUser } = useAuth();
+  const [index, setIndex] = React.useState(0);
+  const [routes] = React.useState([
+    { key: 'polls', title: 'Your Polls', icon: 'poll' },
+    { key: 'votes', title: 'Your Votes', icon: 'how-to-vote' },
+  ]);
 
-  const handleLogout = () => {
-    setLoggedInUser(null);
-    navigation.navigate('Login'); // Ensure 'Login' matches the name in your Stack.Navigator
-  };
+  const theme = useTheme();
+
+  const renderPollsScreen = () => (
+    <PollsScreen
+      navigation={navigation as PollsScreenNavigationProp}
+      route={{ key: 'polls', name: 'Polls' } as PollsScreenRouteProp}
+    />
+  );
+
+  const renderVotesScreen = () => <VotesScreen navigation={navigation as VotesScreenNavigationProp}
+  route={{ key: 'votes', name: 'Votes' } as VotesScreenRouteProp} />;
+
+  const renderScene = BottomNavigation.SceneMap({
+    polls: renderPollsScreen,
+    votes: renderVotesScreen,
+  });
+
+  const renderIcon = (props: { route: { key: string; icon: string } }) => (
+    <Icon name={props.route.icon} size={24} color={theme.colors.primary} />
+  );
 
   return (
     <View style={styles.container}>
       <Appbar.Header>
         <Appbar.Content title="Poll Dance" titleStyle={styles.title} />
-        <Appbar.Action icon="account-circle-outline" onPress={() => navigation.navigate('Profile')} />
+        <Appbar.Action
+          icon="account-circle-outline"
+          onPress={() => navigation.navigate('Profile')}
+        />
         <Text style={styles.caption}>Profile</Text>
       </Appbar.Header>
-      <View style={styles.content}>
-        <Text>Welcome to the Home Page!</Text>
-        <Button
-          icon={() => <Icon name="camera" size={20} color="white" />}
-          mode="contained"
-          onPress={handleLogout}
-        >
-          Logout
-        </Button>
-      </View>
+      <BottomNavigation
+        navigationState={{ index, routes }}
+        onIndexChange={setIndex}
+        renderScene={renderScene}
+        renderIcon={renderIcon}
+      />
     </View>
   );
 };
@@ -49,11 +71,6 @@ const styles = StyleSheet.create({
     bottom: 10,
     fontSize: 12,
     color: 'white',
-  },
-  content: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
   },
 });
 
